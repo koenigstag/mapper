@@ -97,31 +97,4 @@ describe('Map Array Classes', () => {
         expect(dtos.length).toEqual(1);
         expect(dtos[0].fullName).toEqual('Chau Tran');
     });
-
-    // it('should map async with afterMapArray', async () => {
-    //     createMap(
-    //         mapper,
-    //         SimpleUser,
-    //         SimpleUserDto,
-    //         forMember(
-    //             (d) => d.fullName,
-    //             ignore()
-    //         ),
-    //         afterMapArray(async (sources, destinations) => {
-    //             await Promise.all(
-    //                 destinations.map(async (destination, index) => {
-    //                     const source = sources[index];
-    //                     destination.fullName = await asyncResolve(source.firstName + ' ' + source.lastName);
-    //                 })
-    //             );
-    //         })
-    //     );
-
-    //     const user = new SimpleUser('Chau', 'Tran');
-
-    //     const dtos = await mapper.mapArrayAsync([user], SimpleUser, SimpleUserDto);
-
-    //     expect(dtos.length).toEqual(1);
-    //     expect(dtos[0].fullName).toEqual('Chau Tran');
-    // });
 });
