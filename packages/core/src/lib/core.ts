@@ -329,7 +329,7 @@ Mapper {} is an empty Object as a Proxy. The following methods are available to 
                         const afterMap = afterMapCb || afterMapArray;
 
                         if (beforeMap) {
-                            beforeMap(sourceArray, []);
+                            beforeMap(sourceArray, [], extraArgs);
                         }
 
                         const destinationArray: TDestination[] = [];
@@ -370,7 +370,7 @@ Mapper {} is an empty Object as a Proxy. The following methods are available to 
                         }
 
                         if (afterMap) {
-                            afterMap(sourceArray, destinationArray);
+                            afterMap(sourceArray, destinationArray, extraArgs);
                         }
 
                         return destinationArray;
@@ -500,14 +500,21 @@ Mapper {} is an empty Object as a Proxy. The following methods are available to 
                             destinationIdentifier
                         );
 
-                        const { beforeMap, afterMap, extraArgs } =
+                        const callbacks = mapping[MappingClassId.callbacks];
+                        const beforeMapArray = callbacks?.[MappingCallbacksClassId.beforeMapArray];
+                        const afterMapArray = callbacks?.[MappingCallbacksClassId.afterMapArray];
+
+                        const { beforeMap: beforeMapCb, afterMap: afterMapCb, extraArgs } =
                             (mapOptions || {}) as MapOptions<
                                 TSource[],
                                 TDestination[]
                             >;
 
+                        const beforeMap = beforeMapCb || beforeMapArray;
+                        const afterMap = afterMapCb || afterMapArray;
+
                         if (beforeMap) {
-                            beforeMap(sourceArray, destinationArray);
+                            beforeMap(sourceArray, destinationArray, extraArgs);
                         }
 
                         for (
@@ -543,7 +550,7 @@ Mapper {} is an empty Object as a Proxy. The following methods are available to 
                         }
 
                         if (afterMap) {
-                            afterMap(sourceArray, destinationArray);
+                            afterMap(sourceArray, destinationArray, extraArgs);
                         }
                     };
                 }
