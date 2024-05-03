@@ -8,10 +8,10 @@ export function beforeMapArray<
     cb: MapCallback<TSource[], TDestination[]>
 ): MappingConfiguration<TSource, TDestination> {
     return (mapping) => {
-        if (mapping[MappingClassId.callbacks] == null) {
+        if (!mapping[MappingClassId.callbacks]) {
             mapping[MappingClassId.callbacks] = [];
         }
-        mapping[MappingClassId.callbacks]![MappingCallbacksClassId.beforeMapArray] =
+        mapping[MappingClassId.callbacks][MappingCallbacksClassId.beforeMapArray] =
             cb;
     };
 }
