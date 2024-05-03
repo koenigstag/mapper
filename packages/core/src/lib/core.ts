@@ -11,20 +11,22 @@ import {
     RECURSIVE_DEPTH,
     STRATEGY,
 } from './symbols';
-import type {
-    ArrayKeyedMap,
-    Dictionary,
-    ErrorHandler,
-    MapOptions,
-    Mapper,
-    Mapping,
-    MappingConfiguration,
-    MappingStrategy,
-    MappingStrategyInitializer,
-    Metadata,
-    MetadataIdentifier,
-    ModelIdentifier,
-    NamingConventionInput,
+import {
+    MappingCallbacksClassId,
+    MappingClassId,
+    type ArrayKeyedMap,
+    type Dictionary,
+    type ErrorHandler,
+    type MapOptions,
+    type Mapper,
+    type Mapping,
+    type MappingConfiguration,
+    type MappingStrategy,
+    type MappingStrategyInitializer,
+    type Metadata,
+    type MetadataIdentifier,
+    type ModelIdentifier,
+    type NamingConventionInput,
 } from './types';
 import { getMapping } from './utils/get-mapping';
 import { AutoMapperLogger } from './utils/logger';
@@ -313,11 +315,18 @@ Mapper {} is an empty Object as a Proxy. The following methods are available to 
                             destinationIdentifier
                         );
 
-                        const { beforeMap, afterMap, extraArgs } =
+                        const callbacks = mapping[MappingClassId.callbacks];
+                        const beforeMapArray = callbacks?.[MappingCallbacksClassId.beforeMapArray];
+                        const afterMapArray = callbacks?.[MappingCallbacksClassId.afterMapArray];
+
+                        const { beforeMap: beforeMapCb, afterMap: afterMapCb, extraArgs } =
                             (mapOptions || {}) as MapOptions<
                                 TSource[],
                                 TDestination[]
                             >;
+
+                        const beforeMap = beforeMapCb || beforeMapArray;
+                        const afterMap = afterMapCb || afterMapArray;
 
                         if (beforeMap) {
                             beforeMap(sourceArray, []);

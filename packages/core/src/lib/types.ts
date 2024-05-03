@@ -486,6 +486,8 @@ export const enum MappingPropertiesClassId {
 export const enum MappingCallbacksClassId {
     beforeMap,
     afterMap,
+    beforeMapArray,
+    afterMapArray,
 }
 
 export const enum NestedMappingPairClassId {
@@ -564,7 +566,9 @@ export type Mapping<
     >,
     callbacks?: [
         beforeMap?: MapCallback<TSource, TDestination>,
-        afterMap?: MapCallback<TSource, TDestination>
+        afterMap?: MapCallback<TSource, TDestination>,
+        beforeMapArray?: MapCallback<TSource[], TDestination[]>,
+        afterMapArray?: MapCallback<TSource[], TDestination[]>
     ],
     namingConventions?: [
         source: NamingConvention,
