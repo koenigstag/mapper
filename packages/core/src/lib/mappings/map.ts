@@ -10,6 +10,7 @@ import type {
 import { MapFnClassId, MetadataClassId, TransformationType } from '../types';
 import { assertUnmappedProperties } from '../utils/assert-unmapped-properties';
 import { get } from '../utils/get';
+import { getBeforeAndAfterMap } from '../utils/get-callbacks';
 import { getMapping } from '../utils/get-mapping';
 import { isDateConstructor } from '../utils/is-date-constructor';
 import { isEmpty } from '../utils/is-empty';
@@ -116,17 +117,12 @@ export function map<
         ,
         mapper,
         destinationConstructor,
-        ,
-        [mappingBeforeCallback, mappingAfterCallback] = [],
     ] = mapping;
 
     // deconstruct MapOptions
     const {
-        beforeMap: mapBeforeCallback,
-        afterMap: mapAfterCallback,
         destinationConstructor:
             mapDestinationConstructor = destinationConstructor,
-        extraArgs,
     } = options ?? {};
 
     const errorHandler = getErrorHandler(mapper);
@@ -137,6 +133,12 @@ export function map<
         destinationIdentifier
     );
 
+    const { beforeMap, afterMap, extraArgs } =
+      getBeforeAndAfterMap<TSource, TDestination>(
+          mapping,
+          options || {}
+      );
+
     // get extraArguments
     const extraArguments = extraArgs?.(mapping, destination);
 
@@ -144,7 +146,6 @@ export function map<
     const configuredKeys: string[] = [];
 
     if (!isMapArray) {
-        const beforeMap = mapBeforeCallback ?? mappingBeforeCallback;
         if (beforeMap) {
             beforeMap(sourceObject, destination, extraArguments);
         }
@@ -354,7 +355,6 @@ Original error: ${originalError}`;
     }
 
     if (!isMapArray) {
-        const afterMap = mapAfterCallback ?? mappingAfterCallback;
         if (afterMap) {
             afterMap(sourceObject, destination, extraArguments);
         }

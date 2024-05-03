@@ -11,23 +11,22 @@ import {
     RECURSIVE_DEPTH,
     STRATEGY,
 } from './symbols';
-import {
-    MappingCallbacksClassId,
-    MappingClassId,
-    type ArrayKeyedMap,
-    type Dictionary,
-    type ErrorHandler,
-    type MapOptions,
-    type Mapper,
-    type Mapping,
-    type MappingConfiguration,
-    type MappingStrategy,
-    type MappingStrategyInitializer,
-    type Metadata,
-    type MetadataIdentifier,
-    type ModelIdentifier,
-    type NamingConventionInput,
+import type {
+    ArrayKeyedMap,
+    Dictionary,
+    ErrorHandler,
+    MapOptions,
+    Mapper,
+    Mapping,
+    MappingConfiguration,
+    MappingStrategy,
+    MappingStrategyInitializer,
+    Metadata,
+    MetadataIdentifier,
+    ModelIdentifier,
+    NamingConventionInput,
 } from './types';
+import { getBeforeAndAfterMap } from './utils/get-callbacks';
 import { getMapping } from './utils/get-mapping';
 import { AutoMapperLogger } from './utils/logger';
 
@@ -315,21 +314,19 @@ Mapper {} is an empty Object as a Proxy. The following methods are available to 
                             destinationIdentifier
                         );
 
-                        const callbacks = mapping[MappingClassId.callbacks];
-                        const beforeMapArray = callbacks?.[MappingCallbacksClassId.beforeMapArray];
-                        const afterMapArray = callbacks?.[MappingCallbacksClassId.afterMapArray];
+                        const { beforeMap, afterMap, extraArgs } =
+                            getBeforeAndAfterMap<TSource[], TDestination[]>(
+                                mapping,
+                                (mapOptions || {}) as MapOptions<
+                                    TSource[],
+                                    TDestination[]
+                                >
+                            );
 
-                        const { beforeMap: beforeMapCb, afterMap: afterMapCb, extraArgs } =
-                            (mapOptions || {}) as MapOptions<
-                                TSource[],
-                                TDestination[]
-                            >;
-
-                        const beforeMap = beforeMapCb || beforeMapArray;
-                        const afterMap = afterMapCb || afterMapArray;
+                        const extraArguments = extraArgs?.(mapping, []);
 
                         if (beforeMap) {
-                            beforeMap(sourceArray, [], extraArgs);
+                            beforeMap(sourceArray, [], extraArguments);
                         }
 
                         const destinationArray: TDestination[] = [];
@@ -370,7 +367,7 @@ Mapper {} is an empty Object as a Proxy. The following methods are available to 
                         }
 
                         if (afterMap) {
-                            afterMap(sourceArray, destinationArray, extraArgs);
+                            afterMap(sourceArray, destinationArray, extraArguments);
                         }
 
                         return destinationArray;
@@ -500,21 +497,19 @@ Mapper {} is an empty Object as a Proxy. The following methods are available to 
                             destinationIdentifier
                         );
 
-                        const callbacks = mapping[MappingClassId.callbacks];
-                        const beforeMapArray = callbacks?.[MappingCallbacksClassId.beforeMapArray];
-                        const afterMapArray = callbacks?.[MappingCallbacksClassId.afterMapArray];
+                        const { beforeMap, afterMap, extraArgs } =
+                            getBeforeAndAfterMap<TSource[], TDestination[]>(
+                                mapping,
+                                (mapOptions || {}) as MapOptions<
+                                    TSource[],
+                                    TDestination[]
+                                >
+                            );
 
-                        const { beforeMap: beforeMapCb, afterMap: afterMapCb, extraArgs } =
-                            (mapOptions || {}) as MapOptions<
-                                TSource[],
-                                TDestination[]
-                            >;
-
-                        const beforeMap = beforeMapCb || beforeMapArray;
-                        const afterMap = afterMapCb || afterMapArray;
+                        const extraArguments = extraArgs?.(mapping, destinationArray);
 
                         if (beforeMap) {
-                            beforeMap(sourceArray, destinationArray, extraArgs);
+                            beforeMap(sourceArray, destinationArray, extraArguments);
                         }
 
                         for (
@@ -550,7 +545,7 @@ Mapper {} is an empty Object as a Proxy. The following methods are available to 
                         }
 
                         if (afterMap) {
-                            afterMap(sourceArray, destinationArray, extraArgs);
+                            afterMap(sourceArray, destinationArray, extraArguments);
                         }
                     };
                 }
