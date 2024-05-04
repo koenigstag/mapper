@@ -33,7 +33,7 @@ mapper.map(user, User, UserDto, {
 :::info
 
 -   `afterMap()` on `map()` has precedence over `Mapping`
--   For `mapArray` (and its variants), `afterMap()` on `Mapping` is **ignored** because it would be bad for performance if we run `afterMap` for each and every item of the array. `afterMap()` on `mapArray()` will be invoked with `(sourceArray, destinationArray)` instead
+-   For `mapArray` (and its variants), `afterMap()` on `Mapping` is **ignored** because it would be bad for performance if we run `afterMap` for each and every item of the array. Use `afterMapArray()` on `Mapping` instead and it will be invoked with `(sourceArray, destinationArray)` params
 
 :::
 

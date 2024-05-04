@@ -1,0 +1,80 @@
+---
+id: after-map-array
+title: AfterMapArray
+sidebar_label: AfterMapArray
+sidebar_position: 3
+---
+
+As the name suggests, `afterMapArray()` sets up a `MapCallback` to be called **after** the mapArray operation.
+
+## Configure on `Mapping`
+
+Pass `afterMapArray()` in `createMap()` to sets up the `MapCallback`
+
+```ts
+createMap(
+    mapper,
+    User,
+    UserDto,
+    afterMapArray((sources, destinations) => {
+        // destinations.map((destination, index) => Object.assign(destination, { prop: sources[index].prop }));
+    })
+);
+```
+
+## Configure on `mapArray()`
+
+Pass `afterMap` in `MapOptions` when calling `mapArray()` to sets up the `MapCallback`
+
+```ts
+mapper.mapArray(user, User, UserDto, {
+    afterMap: (sources, destinations) => {},
+});
+```
+
+:::info
+
+-   `afterMap()` on `mapArray()` has precedence over `afterMapArray` on `Mapping`
+-   both `afterMap()` on `mapArray()` and `afterMapArray()` on `Mapping` will be invoked with `(sourceArray, destinationArray)` parameters
+
+:::
+
+## Async Mapping
+
+One of the common use-cases of `afterMapArray` is to execute some asynchronous operation. Let's assume our `Destinations` have some property whose value can only be computed from an asynchronous operation, we can leverage `mapArrayAsync()` and `afterMapArray()` for it.
+
+```ts
+createMap(
+    mapper,
+    User,
+    UserDto,
+    //                  👇 We are fetching the "fullName" manually
+    //                  👇          👇 so we need to ignore it
+    forMember((d) => d.fullName, ignore()),
+    afterMapArray(async (sources, destinations) => {
+        await Promise.all(
+            sources.map(async (source, index) => {
+                const fullName = await fetchFullName(source);
+                Object.assign(destinations[index], { fullName });
+            })
+        );
+    })
+);
+
+//                          👇 mapArrayAsync is needed if we use the above "trick" with afterMapArray
+const dto = await mapper.mapArrayAsync([user], User, UserDto);
+```
+
+:::caution
+
+Simple asynchronous operations should be fine with this approach. However due to [Fake Async](../misc/fake-async), we should **NOT** use AutoMapper for a particular pair of models if those models require some heavy and complex asynchronous operations.
+
+:::
+
+## What about `postMap`?
+
+When create the `Mapper`, we can customize the `postMap` function on the `MappingStrategy`. The differences between `postMap` and `afterMapArray` are:
+
+-   `postMap` runs after every **map** operation
+-   There is only one `postMap` per `Mapper`
+-   `postMap` runs **BEFORE** `afterMapArray`

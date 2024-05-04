@@ -2,7 +2,7 @@
 id: before-map
 title: BeforeMap
 sidebar_label: BeforeMap
-sidebar_position: 4
+sidebar_position: 5
 ---
 
 As the name suggests, `beforeMap()` sets up a `MapCallback` to be called **before** the map operation.
@@ -33,7 +33,7 @@ mapper.map(user, User, UserDto, {
 :::info
 
 -   `beforeMap()` on `map()` has precedence over `Mapping`
--   For `mapArray` (and its variants), `beforeMap()` on `Mapping` is **ignored** because it would be bad for performance if we run `beforeMap` for each and every item of the array. `beforeMap()` on `mapArray()` will be invoked with `(sourceArray, [])` instead
+-   For `mapArray` (and its variants), `beforeMap()` on `Mapping` is **ignored** because it would be bad for performance if we run `beforeMap` for each and every item of the array. Use `beforeMapArray()` on `Mapping` instead and it will be invoked with `(sourceArray, [])` params
 
 :::
 

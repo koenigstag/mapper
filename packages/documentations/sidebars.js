@@ -42,8 +42,10 @@ const sidebars = {
             items: [
                 'mapping-configuration/overview',
                 'mapping-configuration/after-map',
+                'mapping-configuration/after-map-array',
                 'mapping-configuration/auto-map',
                 'mapping-configuration/before-map',
+                'mapping-configuration/before-map-array',
                 'mapping-configuration/construct-using',
                 'mapping-configuration/extend',
                 {
